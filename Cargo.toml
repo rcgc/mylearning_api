@@ -1,0 +1,35 @@
+[package]
+name = "mylearning_api"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# MongoDB Rust driver
+mongodb = "2.5" # Updated for modern async/await support.
+
+# Actix Web Framework
+actix-web = "4.0" # Use the latest major version for better features and performance.
+
+# Actix Runtime
+actix-rt = "2.0" # Compatible with actix-web 4.0.
+
+# BSON library for MongoDB
+bson = "2.0" # Matches the MongoDB driver version.
+
+# Serialization and Deserialization
+serde = { version = "1.0", features = ["derive"] } # Ensure derive macros are enabled.
+
+# Futures for async handling
+futures = "0.3" # Latest compatible version.
+
+# Environment Logger
+env_logger = "0.11.5" # Use the latest version for better logging features.
+
+# dotenv for environment variable management
+dotenv = "0.15" # Still compatible.
+
+# CORS middleware
+actix-cors = "0.7" # Latest version compatible with actix-web 4.0.
+
+# JSON serialization and deserialization
+serde_json = "1.0" # Still compatible with serde 1.0.
