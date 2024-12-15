@@ -6,7 +6,7 @@ pub struct Watched {
     #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
     pub _id         : Option<ObjectId>,
     pub course_id   : ObjectId,
-    pub finished_at : DateTime,
+    pub finished_at : Option<DateTime>,
     pub created_at  : DateTime,
     pub updated_at  : DateTime,
     pub archived    : bool,

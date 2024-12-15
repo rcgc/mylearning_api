@@ -4,7 +4,7 @@ use actix_web::{delete, get, post, put, web, HttpResponse, Responder};
 /// Route to get all courses
 #[get("/courses/get-all")]
 async fn get_all(app_data: web::Data<crate::AppState>) -> impl Responder {
-    let result = app_data.service_manager.api.get_all().await;
+    let result = app_data.service_manager.course_service.get_all().await;
     match result {
         Ok(courses) => HttpResponse::Ok().json(courses),
         Err(e) => {
@@ -21,7 +21,7 @@ async fn get_by_id(
     course_id: web::Path<String>,
 ) -> impl Responder {
     let id = course_id.into_inner(); // Extract `id` as a String
-    match app_data.service_manager.api.get_by_id(&id).await {
+    match app_data.service_manager.course_service.get_by_id(&id).await {
         Ok(Some(course)) => HttpResponse::Ok().json(course), // Course found
         Ok(None) => HttpResponse::NotFound().body("Course not found"), // Course not found
         Err(e) => {
@@ -34,7 +34,7 @@ async fn get_by_id(
 /// Route to add a new course
 #[post("/courses/add")]
 async fn add(app_data: web::Data<crate::AppState>, data: web::Json<Course>) -> impl Responder {
-    match app_data.service_manager.api.create(&data).await {
+    match app_data.service_manager.course_service.create(&data).await {
         Ok(result) => match result.inserted_id.as_object_id() {
             Some(id) => HttpResponse::Ok().json(id.to_hex()),
             None => HttpResponse::InternalServerError().body("Failed to extract inserted_id"),
@@ -54,7 +54,7 @@ async fn update(
     course_id: web::Path<String>,
 ) -> impl Responder {
     let id = course_id.into_inner(); // Extract `course_id` as a String
-    match app_data.service_manager.api.update(&data, &id).await {
+    match app_data.service_manager.course_service.update(&data, &id).await {
         Ok(result) => {
             if result.modified_count > 0 {
                 HttpResponse::Ok().json("Course updated successfully")
@@ -76,7 +76,7 @@ async fn delete(
     course_id: web::Path<String>,
 ) -> impl Responder {
     let id = course_id.into_inner(); // Extract `course_id` as a String
-    match app_data.service_manager.api.delete(&id).await {
+    match app_data.service_manager.course_service.delete(&id).await {
         Ok(result) => {
             if result.deleted_count > 0 {
                 HttpResponse::Ok().json("Course deleted successfully")
