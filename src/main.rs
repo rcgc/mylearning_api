@@ -7,19 +7,25 @@ use actix_web::{http, middleware, App, HttpServer};
 use dotenv::dotenv;
 use mongodb::{options::ClientOptions, Client};
 use std::env;
-use services::{course_service::ApiService as CourseService, watched_service::ApiService as WatchedService};
-use routes::{ course_route, watched_route };
+use services::{
+    course_service::ApiService as CourseService,
+    user_service::ApiService as UserService,
+    watched_service::ApiService as WatchedService
+};
+use routes::{ course_route, user_route, watched_route };
 
 #[derive(Clone)]
 pub struct ServiceManager {
     pub course_service: CourseService,
+    pub user_service: UserService,
     pub watched_service: WatchedService,
 }
 
 impl ServiceManager {
-    pub fn new(course_service: CourseService, watched_service: WatchedService) -> Self {
+    pub fn new(course_service: CourseService, user_service: UserService, watched_service: WatchedService) -> Self {
         ServiceManager {
             course_service,
+            user_service,
             watched_service,
         }
     }
@@ -44,15 +50,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>>{
     let db = client.database(&database_name);
 
     let course_collection_name = env::var("COURSE_COLLECTION_NAME").expect("COURSE_COLLECTION_NAME is not set in .env file");
+    let user_collection_name = env::var("USER_COLLECTION_NAME").expect("USER_COLLECTION_NAME is not set in .env file");
     let watched_collection_name = env::var("WATCHED_COLLECTION_NAME").expect("WATCHED_COLLECTION_NAME is not set in .env file");
 
     let course_collection = db.collection(&course_collection_name);
+    let user_collection = db.collection(&user_collection_name);
     let watched_collection = db.collection(&watched_collection_name);
 
     let course_service = CourseService::new(course_collection);
+    let user_service = UserService::new(user_collection);
     let watched_service = WatchedService::new(watched_collection);
 
-    let service_manager = ServiceManager::new(course_service, watched_service);
+    let service_manager = ServiceManager::new(course_service, user_service, watched_service);
 
     let server_url = env::var("SERVER_URL").expect("SERVER_URL is not set in .env file");
 
@@ -70,6 +79,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>>{
                 service_manager: service_manager.clone(),
             }))
             .configure(course_route::init)
+            .configure(user_route::init)
             .configure(watched_route::init)
     })
     .bind(server_url)?

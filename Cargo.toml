@@ -38,3 +38,5 @@ actix-cors = "0.7" # Latest version compatible with actix-web 4.0.
 serde_json = "1.0" # Still compatible with serde 1.0.
 
 thiserror = "1.0"
+
+bcrypt = "0.12"

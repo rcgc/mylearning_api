@@ -43,7 +43,7 @@ impl ApiService {
 
         while let Some(result) = cursor.next().await {
             match result {
-                Ok(course) => docs.push(course),
+                Ok(watched) => docs.push(watched),
                 Err(err) => return Err(err),
             }
         }
@@ -62,7 +62,6 @@ impl ApiService {
         self.collection.insert_one(w, None).await
     }
 
-    /// Update an existing course by its MongoDB `_id`.
     pub async fn update(&self, c: &Watched, watched_id: &str) -> Result<UpdateResult, ApiServiceError> {
         let object_id = ObjectId::parse_str(watched_id).map_err(|_| ApiServiceError::InvalidObjectId)?;
         let filter = doc! { "_id": object_id };
