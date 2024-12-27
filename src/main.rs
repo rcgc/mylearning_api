@@ -12,7 +12,7 @@ use services::{
     user_service::ApiService as UserService,
     watched_service::ApiService as WatchedService
 };
-use routes::{ course_route, user_route, watched_route };
+use routes::{ course_route, health_route, user_route, watched_route };
 
 #[derive(Clone)]
 pub struct ServiceManager {
@@ -81,6 +81,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>>{
             .configure(course_route::init)
             .configure(user_route::init)
             .configure(watched_route::init)
+            .configure(health_route::init)
     })
     .bind(server_url)?
     .run()
