@@ -2,7 +2,7 @@ use crate::models::user_model::User;
 use actix_web::{delete, get, post, put, web, HttpResponse, Responder};
 
 /// Route to get all users
-#[get("/users/get-all")]
+#[get("/users")]
 async fn get_all(app_data: web::Data<crate::AppState>) -> impl Responder {
     let result = app_data.service_manager.user_service.get_all().await;
     match result {
@@ -15,7 +15,7 @@ async fn get_all(app_data: web::Data<crate::AppState>) -> impl Responder {
 }
 
 /// Route to get a users by its MongoDB `_id`
-#[get("/users/get-by-id/{id}")]
+#[get("/users/{id}")]
 async fn get_by_id(
     app_data: web::Data<crate::AppState>,
     user_id: web::Path<String>,
@@ -32,7 +32,7 @@ async fn get_by_id(
 }
 
 /// Route to add a new user
-#[post("/users/add")]
+#[post("/users")]
 async fn add(app_data: web::Data<crate::AppState>, data: web::Json<User>) -> impl Responder {
     // Clone the user data and hash the password
     let mut user = data.into_inner();
@@ -63,7 +63,7 @@ async fn add(app_data: web::Data<crate::AppState>, data: web::Json<User>) -> imp
 }
 
 /// Route to update an existing user by its MongoDB `_id`
-#[put("/users/update/{user_id}")]
+#[put("/users/{id}")]
 async fn update(
     app_data: web::Data<crate::AppState>,
     data: web::Json<User>,
@@ -85,7 +85,7 @@ async fn update(
     }
 }
 
-#[delete("/users/delete/{user_id}")]
+#[delete("/users/{id}")]
 async fn delete(
     app_data: web::Data<crate::AppState>,
     user_id: web::Path<String>,
