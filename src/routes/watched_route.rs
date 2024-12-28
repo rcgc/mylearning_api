@@ -1,7 +1,7 @@
 use crate::models::watched_model::Watched;
 use actix_web::{delete, get, post, put, web, HttpResponse, Responder};
 
-#[get("/watched/get-all")]
+#[get("/watched")]
 async fn get_all(app_data: web::Data<crate::AppState>) -> impl Responder {
     let result = app_data.service_manager.watched_service.get_all().await;
     match result {
@@ -13,7 +13,7 @@ async fn get_all(app_data: web::Data<crate::AppState>) -> impl Responder {
     }
 }
 
-#[get("/watched/get-by-id/{id}")]
+#[get("/watched/{id}")]
 async fn get_by_id(
     app_data: web::Data<crate::AppState>,
     watched_id: web::Path<String>,
@@ -30,7 +30,7 @@ async fn get_by_id(
 }
 
 
-#[post("/watched/add")]
+#[post("/watched")]
 async fn add(app_data: web::Data<crate::AppState>, data: web::Json<Watched>) -> impl Responder {
     match app_data.service_manager.watched_service.create(&data).await {
         Ok(result) => match result.inserted_id.as_object_id() {
@@ -44,7 +44,7 @@ async fn add(app_data: web::Data<crate::AppState>, data: web::Json<Watched>) -> 
     }
 }
 
-#[put("/watched/update/{watch_id}")]
+#[put("/watched/{id}")]
 async fn update(
     app_data: web::Data<crate::AppState>,
     data: web::Json<Watched>,
@@ -66,7 +66,7 @@ async fn update(
     }
 }
 
-#[delete("/watched/delete/{watched_id}")]
+#[delete("/watched/{id}")]
 async fn delete(
     app_data: web::Data<crate::AppState>,
     watched_id: web::Path<String>,
