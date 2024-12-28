@@ -2,7 +2,7 @@ use crate::models::course_model::Course;
 use actix_web::{delete, get, post, put, web, HttpResponse, Responder};
 
 /// Route to get all courses
-#[get("/courses/get-all")]
+#[get("/courses")]
 async fn get_all(app_data: web::Data<crate::AppState>) -> impl Responder {
     let result = app_data.service_manager.course_service.get_all().await;
     match result {
@@ -15,7 +15,7 @@ async fn get_all(app_data: web::Data<crate::AppState>) -> impl Responder {
 }
 
 /// Route to get a course by its MongoDB `_id`
-#[get("/courses/get-by-id/{id}")]
+#[get("/courses/{id}")]
 async fn get_by_id(
     app_data: web::Data<crate::AppState>,
     course_id: web::Path<String>,
@@ -32,7 +32,7 @@ async fn get_by_id(
 }
 
 /// Route to add a new course
-#[post("/courses/add")]
+#[post("/courses")]
 async fn add(app_data: web::Data<crate::AppState>, data: web::Json<Course>) -> impl Responder {
     match app_data.service_manager.course_service.create(&data).await {
         Ok(result) => match result.inserted_id.as_object_id() {
@@ -47,7 +47,7 @@ async fn add(app_data: web::Data<crate::AppState>, data: web::Json<Course>) -> i
 }
 
 /// Route to update an existing course by its MongoDB `_id`
-#[put("/courses/update/{course_id}")]
+#[put("/courses/{id}")]
 async fn update(
     app_data: web::Data<crate::AppState>,
     data: web::Json<Course>,
@@ -70,7 +70,7 @@ async fn update(
 }
 
 /// Route to delete a course by its MongoDB `_id`
-#[delete("/courses/delete/{course_id}")]
+#[delete("/courses/{id}")]
 async fn delete(
     app_data: web::Data<crate::AppState>,
     course_id: web::Path<String>,
