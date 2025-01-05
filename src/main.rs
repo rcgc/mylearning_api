@@ -10,24 +10,27 @@ use std::env;
 use services::{
     auth_service::ApiService as AuthService,
     course_service::ApiService as CourseService,
+    course_search_service::ApiService as CourseSearchService,
     user_service::ApiService as UserService,
     watched_service::ApiService as WatchedService
 };
-use routes::{ auth_route, course_route, health_route, user_route, watched_route };
+use routes::{ auth_route, course_route, course_search_route, health_route, user_route, watched_route };
 
 #[derive(Clone)]
 pub struct ServiceManager {
     pub auth_service: AuthService,
     pub course_service: CourseService,
+    pub course_search_service: CourseSearchService,
     pub user_service: UserService,
     pub watched_service: WatchedService,
 }
 
 impl ServiceManager {
-    pub fn new(auth_service:AuthService, course_service: CourseService, user_service: UserService, watched_service: WatchedService) -> Self {
+    pub fn new(auth_service:AuthService, course_service: CourseService, course_search_service: CourseSearchService, user_service: UserService, watched_service: WatchedService) -> Self {
         ServiceManager {
             auth_service,
             course_service,
+            course_search_service,
             user_service,
             watched_service,
         }
@@ -54,20 +57,23 @@ async fn main() -> Result<(), Box<dyn std::error::Error>>{
 
     let auth_collection_name = env::var("USER_COLLECTION_NAME").expect("USER_COLLECTION_NAME is not set in .env file");
     let course_collection_name = env::var("COURSE_COLLECTION_NAME").expect("COURSE_COLLECTION_NAME is not set in .env file");
+    let course_search_collection_name = env::var("COURSE_COLLECTION_NAME").expect("COURSE_COLLECTION_NAME is not set in .env file");
     let user_collection_name = env::var("USER_COLLECTION_NAME").expect("USER_COLLECTION_NAME is not set in .env file");
     let watched_collection_name = env::var("WATCHED_COLLECTION_NAME").expect("WATCHED_COLLECTION_NAME is not set in .env file");
 
     let auth_collection = db.collection(&auth_collection_name);
     let course_collection = db.collection(&course_collection_name);
+    let course_search_collection = db.collection(&course_search_collection_name);
     let user_collection = db.collection(&user_collection_name);
     let watched_collection = db.collection(&watched_collection_name);
 
     let auth_service = AuthService::new(auth_collection);
     let course_service = CourseService::new(course_collection);
+    let course_search_service = CourseSearchService::new(course_search_collection);
     let user_service = UserService::new(user_collection);
     let watched_service = WatchedService::new(watched_collection);
 
-    let service_manager = ServiceManager::new(auth_service, course_service, user_service, watched_service);
+    let service_manager = ServiceManager::new(auth_service, course_service, course_search_service, user_service, watched_service);
 
     let server_url = env::var("SERVER_URL").expect("SERVER_URL is not set in .env file");
 
@@ -86,6 +92,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>>{
             }))
             .configure(auth_route::init)
             .configure(course_route::init)
+            .configure(course_search_route::init)
             .configure(user_route::init)
             .configure(watched_route::init)
             .configure(health_route::init)
