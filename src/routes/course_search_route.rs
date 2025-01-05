@@ -19,6 +19,10 @@ async fn search_courses(
     if let Some(ref platform) = body.platform {
         filters.push(doc! { "platform": { "$regex": platform, "$options": "i" } });
     }
+    if let Some(ref topics) = body.topics {
+        // Ensure topics is an array of strings and match any topic
+        filters.push(doc! { "topics": { "$in": topics.clone() } });
+    }
 
     // Ensure at least one filter is provided
     if filters.is_empty() {
