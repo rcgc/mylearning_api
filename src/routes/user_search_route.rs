@@ -7,16 +7,23 @@ async fn search_users(
     app_data: web::Data<crate::AppState>, // AppState to access services
     body: web::Json<UserSearchParams>,    // Request body for email search
 ) -> impl Responder {
-    // Build the filter only if email is provided
+    // Validate that the email field is provided
     if let Some(ref email) = body.email {
         let filter = doc! { "email": { "$regex": email, "$options": "i" } };
 
         // Perform the search in the database
         match app_data.service_manager.user_search_service.search(filter).await {
-            Ok(users) => HttpResponse::Ok().json(users),
+            Ok(users) => {
+                // Return true if at least one user is found, false otherwise
+                if users.is_empty() {
+                    HttpResponse::Ok().json(false)
+                } else {
+                    HttpResponse::Ok().json(true)
+                }
+            }
             Err(e) => {
                 eprintln!("Error while searching users: {:?}", e);
-                HttpResponse::InternalServerError().body("Failed to search users")
+                HttpResponse::InternalServerError().body("An error occurred while searching for users")
             }
         }
     } else {

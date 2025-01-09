@@ -11,7 +11,7 @@ pub struct User{
     pub major       : String,
     pub email       : String,
     pub password    : String,
-    pub courses     : Option<Vec<String>>,
+    pub watched_ids : Option<Vec<String>>,
     pub created_at  : DateTime,
     pub updated_at  : DateTime,
 }

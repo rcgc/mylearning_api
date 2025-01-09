@@ -28,7 +28,7 @@ async fn login(
                     "lastname": user.lastname,
                     "email": user.email,
                     "major": user.major,
-                    "courses": user.courses,
+                    "courses": user.watched_ids,
                     "created_at": user.created_at,
                     "updated_at": user.updated_at,
                 }
