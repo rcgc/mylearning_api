@@ -24,10 +24,12 @@ async fn login(
                 "message": "Login successful",
                 "login_time": login_time,  // Include the Unix timestamp as a string
                 "user": {
+                    "_id": user._id,
                     "name": user.name,
                     "lastname": user.lastname,
-                    "email": user.email,
                     "major": user.major,
+                    "email": user.email,
+                    "password": user.password,
                     "courses": user.watched_ids,
                     "created_at": user.created_at,
                     "updated_at": user.updated_at,
