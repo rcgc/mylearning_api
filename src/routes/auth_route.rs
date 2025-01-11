@@ -30,7 +30,7 @@ async fn login(
                     "major": user.major,
                     "email": user.email,
                     "password": user.password,
-                    "courses": user.watched_ids,
+                    "watched_ids": user.watched_ids,
                     "created_at": user.created_at,
                     "updated_at": user.updated_at,
                 }
